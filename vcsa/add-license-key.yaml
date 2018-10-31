@@ -1,0 +1,13 @@
+---
+- hosts: 192.168.1.89
+  remote_user: root
+  tasks:
+  - name: Add a new vCenter license
+    vcenter_license:
+      hostname: '192.168.1.89'
+      username: 'administrator@vsphere.local'
+      password: 'VMware123!'
+      license: ABCDEF-GHIJK-LMNOP-QRSTU
+      state: present
+      validate_certs: false
+    delegate_to: localhost
