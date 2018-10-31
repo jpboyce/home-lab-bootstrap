@@ -1,0 +1,13 @@
+---
+- hosts: 192.168.1.89
+  remote_user: root
+  tasks:
+  - name: Create Datacenter
+    local_action:
+      module: vmware_datacenter
+      hostname: 192.168.1.89
+      username: 'administrator@vsphere.local'
+      password: 'VMware123!'
+      datacenter_name: "datacenter"
+      state: present
+      validate_certs: false
