@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  remote_user: root
+  tasks:
+  - name: Add ESXi Host to vCenter
+    vmware_host:
+      hostname: '192.168.1.89'
+      username: 'administrator@vsphere.local'
+      password: 'VMware123!'
+      datacenter_name: 'HomeLab'
+      cluster_name: 'CL-HomeLab'
+      esxi_hostname: '192.168.1.90'
+      esxi_username: 'root'
+      esxi_password: 'VMware123!'
+      state: present
+      validate_certs: false

@@ -1,0 +1,47 @@
+---
+- hosts: localhost
+  remote_user: root
+  tasks:
+  - name: Create Core Infrastructure folder
+    vcenter_folder:
+      hostname: '192.168.1.89'
+      username: 'administrator@vsphere.local'
+      password: 'VMware123!'
+      datacenter: 'HomeLab'
+      folder_name: 'Core Infrastructure'
+      state: present
+      validate_certs: false
+    register: vm_folder_creation_result
+  - name: Create Active Directory under Core Infrastructure folder
+    vcenter_folder:
+      hostname: '192.168.1.89'
+      username: 'administrator@vsphere.local'
+      password: 'VMware123!'
+      datacenter: 'HomeLab'
+      folder_name: 'Active Directory'
+      parent_folder: 'Core Infrastructure'
+      state: present
+      validate_certs: false
+    register: sub_folder_creation_result
+  - name: Create Linux under Core Infrastructure folder
+    vcenter_folder:
+      hostname: '192.168.1.89'
+      username: 'administrator@vsphere.local'
+      password: 'VMware123!'
+      datacenter: 'HomeLab'
+      folder_name: 'Linux'
+      parent_folder: 'Core Infrastructure'
+      state: present
+      validate_certs: false
+    register: sub_folder_creation_result
+  - name: Create VMware under Core Infrastructure folder
+    vcenter_folder:
+      hostname: '192.168.1.89'
+      username: 'administrator@vsphere.local'
+      password: 'VMware123!'
+      datacenter: 'HomeLab'
+      folder_name: 'VMware'
+      parent_folder: 'Core Infrastructure'
+      state: present
+      validate_certs: false
+    register: sub_folder_creation_result

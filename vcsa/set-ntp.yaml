@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  remote_user: root
+  tasks:
+  - name: Set NTP Configuration on all hosts
+    vmware_host_ntp:
+      hostname: '192.168.1.89'
+      username: 'administrator@vsphere.local'
+      password: 'VMware123!'
+      cluster_name: 'CL-HomeLab'
+      ntp_servers:
+        - pool.ntp.org
+      state: present
+      validate_certs: false
+  - name: Start ntpd service setting for all ESXi Host in given Cluster
+    vmware_host_service_manager:
+      hostname: '192.168.1.89'
+      username: 'administrator@vsphere.local'
+      password: 'VMware123!'
+      cluster_name: 'CL-HomeLab'
+      service_name: ntpd
+      state: present
+      validate_certs: false
