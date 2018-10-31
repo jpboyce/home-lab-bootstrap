@@ -6,7 +6,7 @@
           "hostname": "192.168.20.100",
           "username": "root",
           "password": "VMware123!",
-          "deployment_network": "VM Network",
+          "deployment_network": "Standard vSwitch Name",
           "datastore": "ds-abc"
       },
       "appliance": {
