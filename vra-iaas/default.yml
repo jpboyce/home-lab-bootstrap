@@ -1,0 +1,8 @@
+---
+# Just a default playbook
+- name: default
+  hosts: vraiaas-servers
+
+  tasks:
+  - name: ping
+    win_ping:

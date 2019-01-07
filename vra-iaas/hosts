@@ -1,0 +1,2 @@
+[vraiaas-servers]
+127.0.0.1     ansible_connection=winrm        ansible_user=vagrant   ansible_password=vagrant
