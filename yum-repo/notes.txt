@@ -1,0 +1,100 @@
+# Install nginx via EPEL repo
+sudo yum -y install epel-release
+sudo yum -y install nginx
+
+# Start nginx and set to autostart on boot
+sudo systemctl start nginx
+sudo systemctl enable nginx
+sudo systemctl status nginx
+
+# Firewall ports
+# firewall-cmd --zone=public --permanent --add-service=http
+# firewall-cmd --zone=public --permanent --add-service=https
+# firewall-cmd --reload
+
+# Get required packages to make local repo
+sudo yum -y install createrepo yum-utils
+
+# Create folder structure
+sudo mkdir -p /var/www/html/repos/{base,centosplus,extras,updates}
+
+# Run reposync to get content to local folders
+# Base = 9911 items, 8.2GB
+sudo reposync -g -l -d -m --repoid=base --newest-only --download-metadata --download_path=/var/www/html/repos/
+# CentosPlus = 13 items, 129MB
+sudo reposync -g -l -d -m --repoid=centosplus --newest-only --download-metadata --download_path=/var/www/html/repos/
+# Extras = 230 items, 328MB
+sudo reposync -g -l -d -m --repoid=extras --newest-only --download-metadata --download_path=/var/www/html/repos/
+# Updates = 950 items, 1.7GB
+sudo reposync -g -l -d -m --repoid=updates --newest-only --download-metadata --download_path=/var/www/html/repos/
+
+# Check content exists
+# ls -l /var/www/html/repos/base/
+# ls -l /var/www/html/repos/base/Packages/
+# ls -l /var/www/html/repos/centosplus/
+# ls -l /var/www/html/repos/centosplus/Packages/
+# ls -l /var/www/html/repos/extras/
+# ls -l /var/www/html/repos/extras/Packages/
+# ls -l /var/www/html/repos/updates/
+# ls -l /var/www/html/repos/updates/Packages/
+
+# Create new repodata for the local repos
+sudo createrepo -g  /var/www/html/repos/comps.xml /var/www/html/repos/base/
+sudo createrepo -g  /var/www/html/repos/comps.xml /var/www/html/repos/centosplus/
+sudo createrepo -g  /var/www/html/repos/comps.xml /var/www/html/repos/extras/
+sudo createrepo -g  /var/www/html/repos/comps.xml /var/www/html/repos/updates/
+
+# Create config file for nginx
+# vim /etc/nginx/conf.d/repos.conf
+
+server {
+        listen   80;
+        server_name  repos.test.lab;	#change  test.lab to your real domain
+        root   /var/www/html/repos;
+        location / {
+                index  index.php index.html index.htm;
+                autoindex on;	#enable listing of directory index
+        }
+}
+
+# Restart nginx
+systemctl stop nginx
+systemctl start nginx
+
+# Create Cron Job to Synchronize and Create Repositories
+# vim /etc/cron.daily/update-localrepos
+#!/bin/bash
+##specify all local repositories in a single variable
+LOCAL_REPOS=”base centosplus extras updates”
+##a loop to update repos one at a time
+for REPO in ${LOCAL_REPOS}; do
+reposync -g -l -d -m --repoid=$REPO --newest-only --download-metadata --download_path=/var/www/html/repos/
+createrepo -g comps.xml /var/www/html/repos/$REPO/
+done
+
+# Setup Local Yum Repository on Client Machines
+# vim /etc/yum.repos.d/local-repos.repo
+
+[local-base]
+name=CentOS Base
+baseurl=http://repos.test.lab/base/
+gpgcheck=0
+enabled=1
+
+[local-centosplus]
+name=CentOS CentOSPlus
+baseurl=http://repos.test.lab/centosplus/
+gpgcheck=0
+enabled=1
+
+[local-extras]
+name=CentOS Extras
+baseurl=http://repos.test.lab/extras/
+gpgcheck=0
+enabled=1
+
+[local-updates]
+name=CentOS Updates
+baseurl=http://repos.test.lab/updates/
+gpgcheck=0
+enabled=1

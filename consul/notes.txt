@@ -1,0 +1,78 @@
+Setup and Installation of Consul
+
+1. Download Consul
+Via Command line:
+
+CONSUL_VERSION="1.3.0"
+curl --silent --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
+curl --silent --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_SHA256SUMS
+curl --silent --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_SHA256SUMS.sig
+
+
+2. Install Consul
+unzip consul_${CONSUL_VERSION}_linux_amd64.zip
+sudo chown root:root consul
+sudo mv consul /usr/local/bin/
+consul --version
+
+2.1 Create unique user to run Consul
+sudo useradd --system --home /etc/consul.d --shell /bin/false consul
+sudo mkdir --parents /opt/consul
+sudo chown --recursive consul:consul /opt/consul
+
+3. Configure systemd
+sudo touch /etc/systemd/system/consul.service
+
+Add the following to the service file
+[Unit]
+Description="HashiCorp Consul - A service mesh solution"
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=/etc/consul.d/consul.hcl
+
+[Service]
+User=consul
+Group=consul
+ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d/
+ExecReload=/usr/local/bin/consul reload
+KillMode=process
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+
+
+4. Configure Consul (server)
+sudo mkdir --parents /etc/consul.d
+sudo touch /etc/consul.d/consul.hcl
+sudo chown --recursive consul:consul /etc/consul.d
+sudo chmod 640 /etc/consul.d/consul.hcl
+
+Edit consul.hcl file to have the following content:
+datacenter = "dc1"
+data_dir = "/opt/consul"
+encrypt = "Luj2FZWwlt8475wD1WtwUQ=="
+
+5. ACL Configuration
+
+6. Server Configuration
+sudo mkdir --parents /etc/consul.d
+sudo touch /etc/consul.d/server.hcl
+sudo chown --recursive consul:consul /etc/consul.d
+sudo chmod 640 /etc/consul.d/server.hcl
+
+Add content to server.hcl file
+server = true
+bootstrap_expect = 3
+
+7. Consul UI
+Add to server.hcl file to enable UI:
+ui = true
+
+
+10. Starting Consul
+sudo systemctl enable consul
+sudo systemctl start consul
+sudo systemctl status consul

@@ -1,0 +1,52 @@
+Requirements
+
+* IAAS Service Account
+- Must be a domain Account
+- Must have local admin on target
+- No double quote (") in passsword
+- Must have Logon As A Service permissions
+- Must have DBO permissions on the database
+
+
+* IIS App Pool Identity
+- Must have Logon As Batch Job permissions
+
+* IAAS DB Credentails
+- NA
+
+IAAS DB Security Passphrase
+- Cannot contain double quotes (")
+
+vSphere Endpoints
+* Domain or local account with enough permissions on the target
+* Appropriate permissions configured in vRO
+
+
+Hostnames/IPs
+- All systems must be able to resolve each other's FQDN
+- Windows-based components must be resolvable by WINS/short name
+- Names can only begin with letters, end with letters/numbers and only have letters/numbers or hypens in the middle.  Underscore cannot be used
+- Static IPs are preferred
+
+
+* IAAS Windows Servers
+- .NET 3.5 installed
+- .NET 4.5.2 or later installed
+- Powershell 2.0, 3.0, 4.0 installed
+- Distributed Transaction Coordinator (DTC) service enabled and running
+- Secondary Logon Service is running
+
+* IAAS Web Server
+- Install 64-bit Java 1.8 U161 or later
+- Set JAVA_HOME variable to install folder
+- Verify that %JAVA_HOME%\bin\java.exe is available
+- Configure IIS
+
+* IAAS SQL Server
+- Install supported SQL Version
+- Enable TCP/IP support
+
+
+* IAAS Windows Servers - Ports
+- 443/TCP Inbound
+- 1433/TCP Inbound
